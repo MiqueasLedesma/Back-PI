@@ -74,6 +74,7 @@ const searchGame = async (req, res) => {
 
         let apiGamesRefact = gamesFromApi.map(e => {
             return {
+                id: e.id,
                 name: e.name,
                 released: e.released,
                 image: e.background_image,
