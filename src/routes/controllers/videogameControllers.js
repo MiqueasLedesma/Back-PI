@@ -92,9 +92,7 @@ const searchGame = async (req, res) => {
             }
         })
 
-        console.log(gamesFromDB.concat(apiGamesRefact));
-
-        return res.send(gamesFromDB.concat(apiGamesRefact))
+        return res.send(gamesFromDB.concat(apiGamesRefact).slice(0, 15));
 
     } catch (error) {
         console.log(error);
@@ -102,8 +100,47 @@ const searchGame = async (req, res) => {
     }
 }
 
+const getGamesDetail = async (req, res) => {
+    let { id } = req.query;
+    if (Number.isNaN(Number(id))) {
+        try {
+            await Videogame.findByPk(id).then(r => res.send(r));
+            return;
+        } catch (error) {
+            console.log(error.message);
+            return res.status(400).send(error.message);
+        }
+    }
+    else {
+        try {
+            await axios.get(`https://api.rawg.io/api/games/${id}?key=${API_KEY}`)
+                .then(r => r.data)
+                .then(e => res.send({
+                    id: e.id,
+                    name: e.name,
+                    released: e.released,
+                    image: e.background_image,
+                    platforms: e.platforms.map(ch => ch.platform.name),
+                    description: e.description,
+                    rating: e.rating
+                }))
+        } catch (error) {
+            console.log(error.message);
+            return res.status(400).send(error.message);
+        }
+    }
+}
+
 module.exports = {
     getVideogames,
     createVideogame,
-    searchGame
+    searchGame,
+    getGamesDetail
 };
+
+
+// .map(e => {
+//     return {
+
+//     }
+// })

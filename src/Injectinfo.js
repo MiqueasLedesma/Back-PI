@@ -54,6 +54,7 @@ const InjectVideogames = async () => {
                     rating: e.rating,
                     platforms: e.platforms,
                     image: e.image,
+                    description: await axios.get(`https://api.rawg.io/api/games/${e.fromApi}?key=${API_KEY}`).then(r => r.data.description)
                 }
             })
 
