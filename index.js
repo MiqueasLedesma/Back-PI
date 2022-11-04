@@ -22,7 +22,7 @@ const { conn } = require('./src/db.js');
 const { InjectVideogames, injectGenres } = require('./src/Injectinfo.js');
 
 // Syncing all the models at once.
-conn.sync({ force: false }).then(async () => {
+conn.sync({ force: true }).then(async () => {
   await injectGenres();
   await InjectVideogames();
   server.listen(3001, () => {
