@@ -37,6 +37,67 @@ const getVideogames = async (req, res) => {
     };
 };
 
+const getFiltredGames = async (req, res) => {
+    const { category } = req.query;
+    const pageAsNumber = Number.parseInt(req.query.page);
+    const sizeAsNumber = Number.parseInt(req.query.size);
+    let page = 0;
+    let size = 12;
+    let type = req.query.type || 'id';
+    let sort = req.query.sort || 'DESC';
+    if (!Number.isNaN(pageAsNumber) && pageAsNumber >= 0) page = pageAsNumber;
+    if (!Number.isNaN(sizeAsNumber) && sizeAsNumber >= 1) size = sizeAsNumber;
+    try {
+        let videogamesRaw = category ?
+            await Genre.findAll({
+                where: {
+                    name: category
+                },
+                include: [
+                    Videogame
+                ]
+            }).then(r => r[0].videogames.map(e => e.id)) :
+            await Genre.findAll({
+                where: {
+                    status: 'true'
+                },
+                include: [
+                    Videogame
+                ]
+            }).then(r => {
+                let aux = [];
+                for (element of r) {
+                    element.videogames.map(e => {
+                        !aux.includes(e.id) ? aux.push(e.id) : null
+                    })
+                }
+                return aux;
+            });
+
+        await Videogame.findAndCountAll({
+            where: {
+                id: videogamesRaw
+            },
+            limit: size,
+            offset: page * size,
+            include: [
+                Genre
+            ],
+            order: [
+                [type, sort]
+            ]
+        })
+            .then(r => res.send({
+                content: r.rows,
+                pages: Math.ceil(r.count / (size * 2) - 1)
+            }));
+
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).send(error.message);
+    };
+}
+
 const createVideogame = async (req, res) => {
     const { name, description, platforms, rating, genres } = req.body;
     if (!name || !description || !platforms || !rating || !genres) return res.status(400).send('You must complete the entire form');
@@ -136,12 +197,6 @@ module.exports = {
     getVideogames,
     createVideogame,
     searchGame,
-    getGamesDetail
+    getGamesDetail,
+    getFiltredGames
 };
-
-
-// .map(e => {
-//     return {
-
-//     }
-// })
