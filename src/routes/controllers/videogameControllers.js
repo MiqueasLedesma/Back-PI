@@ -132,7 +132,6 @@ const searchGame = async (req, res) => {
     try {
         let gamesFromApi = await axios.get(`https://api.rawg.io/api/games?search=${name.split(' ').join('-')}&key=${API_KEY}`)
             .then(r => r.data.results)
-
         let apiGamesRefact = gamesFromApi.map(e => {
             return {
                 id: e.id,
@@ -140,7 +139,7 @@ const searchGame = async (req, res) => {
                 released: e.released,
                 image: e.background_image,
                 rating: e.rating,
-                platforms: e.platforms.map(ch => ch.platform),
+                platforms: e.platforms?.map(ch => ch.platform?.name),
                 fromApi: e.id,
                 genres: e.genres
             }

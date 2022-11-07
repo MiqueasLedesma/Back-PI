@@ -30,7 +30,7 @@ module.exports = (sequelize) => {
     },
     image: {
       type: DataTypes.STRING,
-      defaultValue: 'https://wellesleysocietyofartists.org/wp-content/uploads/2015/11/image-not-found.jpg'
+      defaultValue: 'https://media.rawg.io/media/games/59d/59d568770eecc7b3f18fcedd314b68d3.jpg'
     },
     fromApi: {
       type: DataTypes.FLOAT,
