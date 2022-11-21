@@ -23,7 +23,7 @@ const { InjectVideogames, injectGenres } = require('./src/Injectinfo.js');
 const { PORT } = process.env;
 
 // Syncing all the models at once.
-conn.sync({ force: true }).then(async () => {
+conn.sync({ force: false }).then(async () => {
   await injectGenres();
   await InjectVideogames();
   server.listen( PORT || 3001, () => {
